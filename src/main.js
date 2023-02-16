@@ -1,10 +1,10 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-// import Vlazyload from "@/directives/Vlazyload";
+import VLazyLoader from "lazy_loading_vue";
 
 //import './assets/main.css'
 
 const app = createApp(App);
-// app.directive("lazy", Vlazyload);
+app.directive("lazy", VLazyLoader);
 
-createApp(App).mount("#app");
+app.mount("#app");

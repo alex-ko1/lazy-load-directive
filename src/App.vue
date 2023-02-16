@@ -1,28 +1,39 @@
 <template>
   <main>
     <div class="posts-1">
-      <div class="post-list" v-show="!isPostsLoading">
+      <div
+        class="post-list"
+        v-show="!isPostsLoading"
+        v-lazy:loader="loadMorePosts1"
+      >
         <TransitionGroup name="posts-transition">
           <post-item
-            v-for="post in posts"
+            v-for="post in posts1"
             :key="post.id"
             :post="post"
             ref="postCard"
           />
         </TransitionGroup>
-        <div v-lazy="loadMorePosts" ref="observerBlock" class="observer"></div>
       </div>
       <div class="loading" v-show="isPostsLoading">Loading...</div>
     </div>
-    <!-- <div class="posts-2">
-      <div class="post-list" v-if="!isPostsLoading">
+
+    <div class="posts-2">
+      <div
+        class="post-list"
+        v-lazy:loader="loadMorePosts2"
+        v-show="!isPostsLoading"
+      >
         <TransitionGroup name="posts-transition">
-          <post-item v-for="post in posts" :key="post.id" :post="post" />
+          <post-item v-for="post in posts2" :key="post.id" :post="post" />
         </TransitionGroup>
       </div>
-      <div class="loading" v-else>Loading...</div>
-      <div v-lazy="loadMorePosts" ref="observer" class="observer"></div>
-    </div> -->
+      <div class="loading" v-show="isPostsLoading">Loading...</div>
+      <!-- <div  ref="observer" class="observer"></div> -->
+    </div>
+
+    <post-list />
+
     <!-- <button @click="fetchPosts">Click</button> -->
   </main>
 </template>
@@ -30,19 +41,27 @@
 <script>
 import PostItem from "./components/PostItem.vue";
 import axios from "axios";
-import lazy from "@/directives/Vlazyload";
+// import lazy from "@/directives/Vlazyload";
+// import lazy from "lazy_loading_vue";
+import PostList from "./components/PostList.vue";
 
 export default {
-  components: { PostItem },
-  directives: { lazy },
+  components: { PostItem, PostList },
+  // directives: { lazy },
   data() {
     return {
       posts: [],
-      posts1: [],
-      posts2: [],
       isPostsLoading: false,
       limit: 10,
       totalPosts: 0,
+
+      posts1: [],
+      limitPosts1: 10,
+      totalPosts1: 0,
+
+      posts2: [],
+      limitPosts2: 10,
+      totalPosts2: 0,
     };
   },
   methods: {
@@ -59,6 +78,11 @@ export default {
         );
         this.totalPosts = response.headers["x-total-count"];
         this.posts = response.data;
+
+        this.posts1 = response.data;
+        this.totalPosts1 = response.headers["x-total-count"];
+        this.posts2 = response.data;
+        this.totalPosts2 = response.headers["x-total-count"];
       } catch (e) {
         alert("Error");
       } finally {
@@ -78,6 +102,44 @@ export default {
             }
           );
           this.posts = [...response.data];
+        }
+      } catch (e) {
+        alert("Error");
+      } finally {
+      }
+    },
+    async loadMorePosts1() {
+      try {
+        if (this.limitPosts1 <= this.totalPosts1) {
+          this.limitPosts1 += 10;
+          const response = await axios.get(
+            "https://jsonplaceholder.typicode.com/posts",
+            {
+              params: {
+                _limit: this.limitPosts1,
+              },
+            }
+          );
+          this.posts1 = [...response.data];
+        }
+      } catch (e) {
+        alert("Error");
+      } finally {
+      }
+    },
+    async loadMorePosts2() {
+      try {
+        if (this.limitPosts2 <= this.totalPosts2) {
+          this.limitPosts2 += 10;
+          const response = await axios.get(
+            "https://jsonplaceholder.typicode.com/posts",
+            {
+              params: {
+                _limit: this.limitPosts2,
+              },
+            }
+          );
+          this.posts2 = [...response.data];
         }
       } catch (e) {
         alert("Error");
@@ -104,11 +166,17 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 main {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 30px 0;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+main > div {
+  width: 48%;
 }
 .loading {
   text-align: center;
@@ -130,10 +198,12 @@ main {
 /* .posts-1 {
   overflow: scroll;
 } */
-/* .posts-1,
+.posts-1,
 .posts-2 {
+  margin-top: 20px;
+  padding-bottom: 30px;
   border: 1px solid;
   height: 40vh;
   overflow: scroll;
-} */
+}
 </style>

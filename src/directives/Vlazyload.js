@@ -1,19 +1,55 @@
 export default {
   mounted(el, binding) {
     // Using Intersection Observer API for lazy loading posts in custom directives.
+    let lastChild, slow, lazyLoader, lastChildCopy;
+    if (binding.arg == "loader") {
+      lazyLoader = document.createElement("div");
+      lazyLoader.classList.add("lazyLoader");
+      //lazyLoader.textContent = "Load...";
+      lazyLoader.style.textAlign = "center";
+      lazyLoader.style.color = "red";
+      lazyLoader.style.margin = "10px auto";
+    }
     const options = {
       //root: null,
       rootMargin: "0px",
-      threshold: 1.0,
+      threshold: 0.75,
     };
     const callback = (entries, observer) => {
       if (entries[0].isIntersecting) {
-        console.log(el);
+        if (lazyLoader) {
+          lastChildCopy = el.lastElementChild;
+          el.append(lazyLoader);
+        }
         binding.value();
+        setTimeout(
+          () => {
+            observer.unobserve(lastChild);
+            el.removeChild(lazyLoader);
+            lastChild = el.lastElementChild;
+            if (lastChildCopy == lastChild) {
+              return;
+            } else {
+              observer.observe(lastChild);
+            }
+          },
+          !slow ? 1000 : 3000
+        );
       }
     };
     const observer = new IntersectionObserver(callback, options);
-    observer.observe(el);
+    setTimeout(() => {
+      lastChild = el.lastElementChild;
+      if (lastChild) {
+        observer.observe(lastChild);
+      } else {
+        slow = true;
+        setTimeout(() => {
+          lastChild = el.lastElementChild;
+          observer.observe(lastChild);
+        }, 2000);
+      }
+    }, 1000);
 
     // document.addEventListener("scroll", function () {
     //   if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
