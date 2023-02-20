@@ -1,8 +1,8 @@
 <template>
   <div
-    class="post-list-component"
+    class="posts-component"
     v-lazy:loader="loadMorePosts3"
-    v-show="!isPostsLoading"
+    v-if="!isPostsLoading"
   >
     <TransitionGroup name="posts-transition">
       <div class="item" v-for="post in posts" :key="post.id">
@@ -15,7 +15,7 @@
     </TransitionGroup>
   </div>
   <!-- <div v-lazy="loadMorePosts3" class="observer"></div> -->
-  <div class="loading" v-show="isPostsLoading">Loading...</div>
+  <div class="loading" v-else>Loading...</div>
 </template>
 
 <script>
@@ -81,7 +81,7 @@ export default {
 </script>
 
 <style scoped>
-.post-list-component {
+.posts-component {
   height: 40vh;
   width: 48%;
   margin-top: 20px;
@@ -89,7 +89,7 @@ export default {
   padding-bottom: 30px;
   height: 40vh;
   overflow: scroll;
-  padding: 10px;
+  padding: 10px 10px 20px;
 }
 .observer {
   height: 30px;

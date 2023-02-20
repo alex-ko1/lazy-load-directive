@@ -39,6 +39,7 @@ export default {
 .item-title {
   text-align: center;
   margin-bottom: 10px;
+  font-style: italic;
 }
 .item-body {
   width: 90%;

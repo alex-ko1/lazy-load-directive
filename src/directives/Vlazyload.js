@@ -1,7 +1,10 @@
 export default {
   mounted(el, binding) {
-    // Using Intersection Observer API for lazy loading posts in custom directives.
-    let lastChild, slow, lazyLoader, lastChildCopy;
+    const elId = Math.round(Math.random() * 100000);
+    el.setAttribute("id", `list-${elId}`);
+
+    let lastChild, slow, lazyLoader, lastChildCopy, updatedEl;
+
     if (binding.arg == "loader") {
       lazyLoader = document.createElement("div");
       lazyLoader.classList.add("lazyLoader");
@@ -10,6 +13,8 @@ export default {
       lazyLoader.style.color = "red";
       lazyLoader.style.margin = "10px auto";
     }
+
+    // Using Intersection Observer API for lazy loading posts in custom directives.
     const options = {
       //root: null,
       rootMargin: "0px",
@@ -22,32 +27,29 @@ export default {
           el.append(lazyLoader);
         }
         binding.value();
-        setTimeout(
-          () => {
-            observer.unobserve(lastChild);
-            el.removeChild(lazyLoader);
-            lastChild = el.lastElementChild;
-            if (lastChildCopy == lastChild) {
-              return;
-            } else {
-              observer.observe(lastChild);
-            }
-          },
-          !slow ? 1000 : 3000
-        );
+
+        setTimeout(() => {
+          observer.unobserve(lastChild);
+          el.removeChild(lazyLoader);
+          lastChild = el.lastElementChild;
+          if (lastChildCopy == lastChild) {
+            return;
+          } else {
+            observer.observe(lastChild);
+          }
+        }, 3000);
       }
     };
     const observer = new IntersectionObserver(callback, options);
     setTimeout(() => {
-      lastChild = el.lastElementChild;
-      if (lastChild) {
-        observer.observe(lastChild);
-      } else {
-        slow = true;
-        setTimeout(() => {
-          lastChild = el.lastElementChild;
+      // debugger;
+      updatedEl = document.getElementById(`list-${elId}`);
+      // console.log(updatedEl);
+      if (updatedEl) {
+        lastChild = updatedEl.lastElementChild;
+        if (lastChild) {
           observer.observe(lastChild);
-        }, 2000);
+        }
       }
     }, 1000);
 

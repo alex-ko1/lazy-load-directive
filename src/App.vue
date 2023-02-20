@@ -3,7 +3,7 @@
     <div class="posts-1">
       <div
         class="post-list"
-        v-show="!isPostsLoading"
+        v-if="!isPostsLoading"
         v-lazy:loader="loadMorePosts1"
       >
         <TransitionGroup name="posts-transition">
@@ -15,20 +15,20 @@
           />
         </TransitionGroup>
       </div>
-      <div class="loading" v-show="isPostsLoading">Loading...</div>
+      <div class="loading" v-else>Loading...</div>
     </div>
 
     <div class="posts-2">
       <div
         class="post-list"
         v-lazy:loader="loadMorePosts2"
-        v-show="!isPostsLoading"
+        v-if="!isPostsLoading"
       >
         <TransitionGroup name="posts-transition">
           <post-item v-for="post in posts2" :key="post.id" :post="post" />
         </TransitionGroup>
       </div>
-      <div class="loading" v-show="isPostsLoading">Loading...</div>
+      <div class="loading" v-else>Loading...</div>
       <!-- <div  ref="observer" class="observer"></div> -->
     </div>
 
@@ -41,13 +41,13 @@
 <script>
 import PostItem from "./components/PostItem.vue";
 import axios from "axios";
-// import lazy from "@/directives/Vlazyload";
+import lazyload from "@/directives/Vlazyload";
 // import lazy from "lazy_loading_vue";
 import PostList from "./components/PostList.vue";
 
 export default {
   components: { PostItem, PostList },
-  // directives: { lazy },
+  directives: { lazyload },
   data() {
     return {
       posts: [],
