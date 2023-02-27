@@ -10,9 +10,9 @@ describe("PostList.cy.js", () => {
     //   $el.replaceWith(content);
     // });
     cy.recursionLoop((times) => {
-      cy.wait(1000);
+      cy.wait(2000);
 
-      cy.get(".posts-component").scrollTo("bottom", { duration: 2000 });
+      cy.get(".posts-component").scrollTo("bottom", { duration: 1000 });
 
       return times < 10;
     });

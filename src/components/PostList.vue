@@ -1,7 +1,7 @@
 <template>
   <div
     class="posts-component"
-    v-lazy:loader="loadMorePosts3"
+    v-LazyLoader:loader="loadMorePosts3"
     v-if="!isPostsLoading"
   >
     <h3 class="posts-title">Directive in another component</h3>
@@ -86,11 +86,10 @@ export default {
 <style scoped>
 .posts-component {
   height: 40vh;
-  width: 48%;
+  /* width: 48%; */
   margin-top: 20px;
   border: 1px solid;
   padding-bottom: 30px;
-  height: 40vh;
   overflow: scroll;
   padding: 10px 0 20px;
 }
