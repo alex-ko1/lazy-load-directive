@@ -1,62 +1,73 @@
 export default {
   mounted(el, binding) {
-    const elId = Math.round(Math.random() * 100000);
-    el.setAttribute("id", `list-${elId}`);
+    // If you use loader
 
-    let lastChild, slow, lazyLoader, lastChildCopy, updatedEl;
-
+    let lastChildItem, lazyLoader, lastChildItemCopy;
     if (binding.arg == "loader") {
       lazyLoader = document.createElement("div");
-      lazyLoader.classList.add("lazyLoader");
-      //lazyLoader.textContent = "Load...";
-      lazyLoader.style.textAlign = "center";
-      lazyLoader.style.color = "red";
-      lazyLoader.style.margin = "10px auto";
+      lazyLoader.classList.add("vue-lazy-loader");
+      lazyLoader.textContent = "Load...";
     }
-
-    // Using Intersection Observer API for lazy loading posts in custom directives.
     const options = {
       //root: null,
       rootMargin: "0px",
       threshold: 0.75,
     };
-    const callback = (entries, observer) => {
+    const callback = async (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          console.log(entry);
+        }
+      });
       if (entries[0].isIntersecting) {
+        lastChildItemCopy =
+          el.querySelectorAll(".lazy-item")[
+            el.querySelectorAll(".lazy-item").length - 1
+          ];
         if (lazyLoader) {
-          lastChildCopy = el.lastElementChild;
           el.append(lazyLoader);
         }
-        binding.value();
+        observer.unobserve(lastChildItem);
+        await binding.value();
 
-        setTimeout(() => {
-          observer.unobserve(lastChild);
+        // setTimeout(() => {
+        if (lazyLoader) {
           el.removeChild(lazyLoader);
-          lastChild = el.lastElementChild;
-          if (lastChildCopy == lastChild) {
-            return;
-          } else {
-            observer.observe(lastChild);
-          }
-        }, 3000);
+        }
+        lastChildItem =
+          el.querySelectorAll(".lazy-item")[
+            el.querySelectorAll(".lazy-item").length - 1
+          ];
+        if (lastChildItemCopy == lastChildItem) {
+          return;
+        } else {
+          observer.observe(lastChildItem);
+        }
+        // }, 3000);
       }
     };
     const observer = new IntersectionObserver(callback, options);
+
     setTimeout(() => {
-      // debugger;
-      updatedEl = document.getElementById(`list-${elId}`);
-      // console.log(updatedEl);
-      if (updatedEl) {
-        lastChild = updatedEl.lastElementChild;
-        if (lastChild) {
-          observer.observe(lastChild);
+      if (el.querySelector(".lazy-item")) {
+        lastChildItem =
+          el.querySelectorAll(".lazy-item")[
+            el.querySelectorAll(".lazy-item").length - 1
+          ];
+        if (lastChildItem) {
+          observer.observe(lastChildItem);
         }
+      } else {
+        setTimeout(() => {
+          if (lastChildItem) {
+            lastChildItem =
+              el.querySelectorAll(".lazy-item")[
+                el.querySelectorAll(".lazy-item").length - 1
+              ];
+            observer.observe(lastChildItem);
+          }
+        }, 4000);
       }
     }, 1000);
-
-    // document.addEventListener("scroll", function () {
-    //   if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-    //     binding.value();
-    //   }
-    // });
   },
 };

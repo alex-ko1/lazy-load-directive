@@ -1,5 +1,5 @@
 <template>
-  <div class="item">
+  <div class="item lazy-item">
     <div class="item-id">{{ post.id }}</div>
     <div class="item-text">
       <div class="item-title">{{ post.title }}</div>
@@ -38,11 +38,13 @@ export default {
 }
 .item-title {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   font-style: italic;
+  font-size: 0.9em;
 }
 .item-body {
   width: 90%;
+  font-size: 0.8em;
   margin: 0 auto;
   text-align: center;
 }

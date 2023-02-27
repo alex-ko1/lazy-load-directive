@@ -1,6 +1,7 @@
 <template>
   <main>
     <div class="posts-1">
+      <h3>Directive with loader</h3>
       <div
         class="post-list"
         v-if="!isPostsLoading"
@@ -15,15 +16,12 @@
           />
         </TransitionGroup>
       </div>
-      <div class="loading" v-else>Loading...</div>
+      <div class="loading" v-show="isPostsLoading">Loading...</div>
     </div>
 
     <div class="posts-2">
-      <div
-        class="post-list"
-        v-lazy:loader="loadMorePosts2"
-        v-if="!isPostsLoading"
-      >
+      <h3>Directive without loader</h3>
+      <div class="post-list" v-lazy="loadMorePosts2" v-if="!isPostsLoading">
         <TransitionGroup name="posts-transition">
           <post-item v-for="post in posts2" :key="post.id" :post="post" />
         </TransitionGroup>

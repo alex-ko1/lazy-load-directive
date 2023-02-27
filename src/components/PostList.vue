@@ -4,8 +4,9 @@
     v-lazy:loader="loadMorePosts3"
     v-if="!isPostsLoading"
   >
+    <h3 class="posts-title">Directive in another component</h3>
     <TransitionGroup name="posts-transition">
-      <div class="item" v-for="post in posts" :key="post.id">
+      <div class="item lazy-item" v-for="post in posts" :key="post.id">
         <div class="item-id">{{ post.id }}</div>
         <div class="item-text">
           <div class="item-title">{{ post.title }}</div>
@@ -23,6 +24,8 @@ import PostItem from "@/components/PostItem.vue";
 import lazyload from "@/directives/Vlazyload";
 import axios from "axios";
 
+import LazyLoader from "lazy_loading_vue";
+
 export default {
   data() {
     return {
@@ -33,7 +36,7 @@ export default {
     };
   },
   components: { PostItem },
-  directives: { lazyload },
+  directives: { lazyload, LazyLoader },
   methods: {
     async fetchPosts3() {
       try {
@@ -89,7 +92,21 @@ export default {
   padding-bottom: 30px;
   height: 40vh;
   overflow: scroll;
-  padding: 10px 10px 20px;
+  padding: 10px 0 20px;
+}
+.item {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  border: 1px solid;
+  margin: 5px 10px;
+  padding: 5px;
+}
+.item-text {
+  text-align: center;
+}
+.item-title {
+  margin-bottom: 5px;
 }
 .observer {
   height: 30px;
